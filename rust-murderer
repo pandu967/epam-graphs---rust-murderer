@@ -1,0 +1,117 @@
+import java.io.*;
+import java.math.*;
+import java.text.*;
+import java.util.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    /*
+     * Complete the rustMurdered function below.
+     */
+    static int[] rustMurderer(int s,int n, int[][] roads) {
+        //ArrayList<ArrayList<Integer>>grp = new ArrayList<ArrayList<Integer>>();
+        int m = roads.length;
+        int ans[] = new int[n+1];
+        boolean vis[] = new boolean[n+1];
+        vis[s] = true;
+    
+        // for(int i=0;i<=n;i++){
+        //     grp.add(new ArrayList<Integer>());
+        // }
+        int grp [][]=new int[n+1][n+1];
+        for(int i=0;i<m;i++){
+            int src = roads[i][0];
+            int des = roads[i][1];
+            grp[src][des]=-1;
+            grp[des][src]=-1;
+        }
+        // for(int i=0;i<m;i++){
+        //     int src = roads[i][0];
+        //     int des = roads[i][1];
+        //     grp.get(src).add(des);
+        //     grp.get(des).add(src);
+        // }
+
+        Queue<Integer> que = new LinkedList<Integer>();
+        que.add(s);
+        que.add(-1);
+        int dis=0;
+        while(que.size()!=0){
+            int e = que.poll();
+            if(e==-1){
+                if(que.size()==0)
+                    break;
+                dis++;
+                que.add(-1);
+            }
+            else{
+                ans[e-1] = dis;
+                // ArrayList<Integer>ar = grp.get(e);
+                for(int i=1;i<=n;i++){
+                    if(grp[e][i]==0)
+                    if(!vis[i] && e!=i){
+                        que.add(i);
+                        vis[i]=true;
+                    }
+                }
+            }
+        }
+        int z =0;
+        int res[] = new int[n-1];
+        for(int i=0;i<n;i++){
+            if(!vis[i+1])
+                ans[i] = -1;
+            if(i+1!=s)
+                res[z++] = ans[i];
+        }
+        // int z =0;
+        // for(int i=0;i<n;i++)
+        //     if(i+1!=s)
+        //         res[z++] = ans[i];
+        return res;
+    }
+
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        int t = Integer.parseInt(scanner.nextLine().trim());
+
+        for (int tItr = 0; tItr < t; tItr++) {
+            String[] nm = scanner.nextLine().split(" ");
+
+            int n = Integer.parseInt(nm[0].trim());
+
+            int m = Integer.parseInt(nm[1].trim());
+
+            int[][] roads = new int[m][2];
+
+            for (int roadsRowItr = 0; roadsRowItr < m; roadsRowItr++) {
+                String[] roadsRowItems = scanner.nextLine().split(" ");
+
+                for (int roadsColumnItr = 0; roadsColumnItr < 2; roadsColumnItr++) {
+                    int roadsItem = Integer.parseInt(roadsRowItems[roadsColumnItr].trim());
+                    roads[roadsRowItr][roadsColumnItr] = roadsItem;
+                }
+            }
+
+            int s = Integer.parseInt(scanner.nextLine().trim());
+
+            int[] result = rustMurderer(s,n, roads);
+
+            for (int resultItr = 0; resultItr < result.length; resultItr++) {
+                bufferedWriter.write(String.valueOf(result[resultItr]));
+
+                if (resultItr != result.length - 1) {
+                    bufferedWriter.write(" ");
+                }
+            }
+
+            bufferedWriter.newLine();
+        }
+
+        bufferedWriter.close();
+    }
+}
